@@ -1,35 +1,20 @@
+import { db } from '../db';
+import { departmentsTable } from '../db/schema';
 import { type Department } from '../schema';
+import { asc } from 'drizzle-orm';
 
-export async function getDepartments(): Promise<Department[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all departments for dropdowns/selection.
-    // Features to implement:
-    // 1. Fetch all active departments
-    // 2. Order by name alphabetically
-    // 3. Include basic department information
-    
-    return Promise.resolve([
-        {
-            id: 1,
-            name: "Forest Conservation Department",
-            code: "FCD",
-            description: "Responsible for forest conservation programs",
-            head_name: "Dr. Ahmad Susanto",
-            contact_email: "fcd@forestry.go.id",
-            contact_phone: "+62-21-1234567",
-            created_at: new Date(),
-            updated_at: new Date()
-        },
-        {
-            id: 2,
-            name: "Forest Research Department",
-            code: "FRD", 
-            description: "Conducts forestry research and development",
-            head_name: "Prof. Siti Rahma",
-            contact_email: "frd@forestry.go.id",
-            contact_phone: "+62-21-7654321",
-            created_at: new Date(),
-            updated_at: new Date()
-        }
-    ] as Department[]);
-}
+export const getDepartments = async (): Promise<Department[]> => {
+  try {
+    // Fetch all departments ordered by name alphabetically
+    const results = await db.select()
+      .from(departmentsTable)
+      .orderBy(asc(departmentsTable.name))
+      .execute();
+
+    // Return results directly since Department schema matches database schema
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch departments:', error);
+    throw error;
+  }
+};
